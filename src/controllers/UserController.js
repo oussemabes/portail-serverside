@@ -96,4 +96,40 @@ async function loginUser(req,res){
     res.status(400).send("Email is wrong");
   }
 }
-module.exports={registerUser,loginUser,checkIfUserExists}
+async function displayUsers(req, res) {
+  console.log("page", req.query.page, "limit", req.query.limit);
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
+  const offset = (page - 1) * limit;
+  try {
+    const getData = `SELECT * FROM users LIMIT ${limit} OFFSET ${offset}`;
+    await db.query(getData, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.send(result);
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ error: "Error retrieving data from the database" });
+  }
+}
+async function countUsers(req,res){
+  try{
+    const getData="SELECT COUNT(*) as count FROM users"
+    await db.query(getData,(err,result)=>{
+      if (err){
+        throw err;
+      }
+      res.send(result)
+    });
+  }catch (err){
+    console.log(err);
+    return res
+    .status(500)
+    .send({error:"Error retrieving data from the database"})
+  }
+}
+module.exports={registerUser,loginUser,checkIfUserExists,countUsers,displayUsers}

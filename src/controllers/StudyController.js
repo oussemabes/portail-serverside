@@ -15,8 +15,8 @@ app.use(fileupload());
 app.use(express.static("files"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-const Axios = require("axios");
-
+//const Axios = require("axios");
+ 
 
 function checkIfStudyExists(req) {
     return new Promise((resolve, reject) => {
@@ -117,52 +117,33 @@ async function deleteStudy(req, res) {
     });
   }
   
-// async function countProductsCategory(req, res) {
-//   const category_id = req.params.category_id;
-//   const page = req.query.page || 1;
-//   const limit = req.query.limit || 10;
-//   const offset = (page - 1) * limit;
-//   try {
-//     const getCount = `SELECT COUNT(*) as count FROM products WHERE category_id = ${category_id} LIMIT ${limit} OFFSET ${offset}`;
-//     await db.query(getCount, (err, result) => {
-//       if (err) {
-//         throw err;
-//       }
-//       console.log(result);
-//       res.send(result);
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     return res
-//       .status(500)
-//       .send({ error: "Error retrieving data from the database" });
-//   }
-// }
 
-async function getCategories(req, res) {
-  try {
-    const getData = "SELECT * FROM categories";
-    await db.query(getData, (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.send(result);
-    });
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .send({ error: "Error retrieving data from the database" });
+async function countParticipantsBystudy(req, res) 
+  {
+    const study_id = req.params.study_id;
+  
+  
+    const query = `SELECT COUNT(*) as count FROM studies WHERE study_id = ${study_id}`;
+    try {
+      await db.query(query, (err, result) => {
+        if (err) {
+          throw err;
+        }
+        res.send(result);
+      });
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .send({ error: "Error retrieving data from the database" });
+    }
   }
-}
-async function displayByCategory(req, res) {
-  const category_id = req.params.category_id;
-  const page = req.query.page || 1;
-  const limit = req.query.limit || 10;
-  const offset = (page - 1) * limit;
+async function displayParticipantsBystudy(req, res) {
+  const study_id = req.params.study_id;
+ 
 
-  console.log(category_id);
-  const query = `SELECT * FROM products WHERE category_id = ${category_id} ORDER BY date Asc LIMIT ${limit} OFFSET ${offset}`;
+  console.log(study_id);
+  const query = `SELECT COUNT(*) as count FROM studies WHERE study_id = ${study_id}`;
   try {
     await db.query(query, (err, result) => {
       if (err) {
@@ -178,49 +159,13 @@ async function displayByCategory(req, res) {
   }
 }
 
-async function displayProduct(req, res) {
-  const product_id = req.params.product_id;
-  const query = `SELECT * FROM products WHERE id = ${product_id} LIMIT 1`;
-  try {
-    await db.query(query, (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.send(result[0]);
-    });
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .send({ error: "Error retrieving data from the database" });
-  }
-}
-
-async function getCategory(req, res) {
-  const category_id = req.params.category_id;
-  const query = `SELECT * FROM categories WHERE id = ${category_id} LIMIT 1`;
-  try {
-    await db.query(query, (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.send(result[0]);
-    });
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .send({ error: "Error retrieving data from the database" });
-  }
-}
 
 module.exports = {
-    displayStudy,
+  displayStudy,
   createStudy,
   countStudies,
   deleteStudy,
-  displayByCategory,
-  getCategory,
-  countProducts,
-  countProductsCategory,
+  countParticipantsBystudy,
+  displayParticipantsBystudy,
+
 };

@@ -16,9 +16,10 @@ app.use(bodyparser.urlencoded({
 //import routes
 const authRoute=require('./Routes/auth')
 const verifyTokenRoute=require('./Routes/verifytocken') 
-
+const studiesRoute=require("./Routes/studies")
 //route middlewares 
 app.use('/backend/user',authRoute)
 app.use('/backend/verifyToken',verifyTokenRoute)
+app.use("/backend/studies",studiesRoute)
 
 module.exports = { app };
