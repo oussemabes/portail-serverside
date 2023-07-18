@@ -24,7 +24,7 @@ async function createTables(){
     }
   );
   await db.query(
-    "CREATE TABLE IF NOT EXISTS participants (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, user_id INT(11) UNSIGNED, study_id INT(11) UNSIGNED, state VARCHAR(10), document VARCHAR(255), FOREIGN KEY (user_id) REFERENCES users(id), FOREIGN KEY (study_id) REFERENCES studies(id));",
+    "CREATE TABLE IF NOT EXISTS participants (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, user_id INT(11) UNSIGNED, study_id INT(11) UNSIGNED, state VARCHAR(10), document VARCHAR(255), FOREIGN KEY (user_id) REFERENCES users(id), FOREIGN KEY (study_id) REFERENCES studies(id),date DATETIME);",
     function (err) {
       if (err) throw err;
       console.log("participants TABLE created.");
