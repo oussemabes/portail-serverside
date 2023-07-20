@@ -37,7 +37,7 @@ async function registerUser(req, res) {
   
     // Create new user
     const data = [req.body.name, req.body.email, hashedPassword,req.body.admin, req.body.age, req.body.chronic];
-    const sql = "INSERT INTO users (name, email, Password, admin, age,chronic) VALUES (?,?,?,?,?,?)";
+    const sql = "INSERT INTO users (name, email, Password, admin, age) VALUES (?,?,?,?,?)";
     const userExists = await checkIfUserExists(req);
     if (userExists === false) {
       await db.query(sql, data, function (err, result) {
@@ -116,6 +116,23 @@ async function displayUsers(req, res) {
       .send({ error: "Error retrieving data from the database" });
   }
 }
+async function displayUsersByID(req, res) {
+  const user_id=req.params.user_id
+  try {
+    const getData = `SELECT * FROM users WHERE id= ${user_id}`;
+    await db.query(getData, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.send(result);
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ error: "Error retrieving data from the database" });
+  }
+}
 async function countUsers(req,res){
   try{
     const getData="SELECT COUNT(*) as count FROM users"
@@ -132,4 +149,4 @@ async function countUsers(req,res){
     .send({error:"Error retrieving data from the database"})
   }
 }
-module.exports={registerUser,loginUser,checkIfUserExists,countUsers,displayUsers}
+module.exports={registerUser,loginUser,checkIfUserExists,countUsers,displayUsers,displayUsersByID}

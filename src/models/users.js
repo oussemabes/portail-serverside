@@ -6,17 +6,17 @@ for (let i = 0; i < 100; i++) {
     let randomName = faker.name.fullName();
     let randomEmail = faker.internet.email();
     let randomPassword = faker.internet.password();
-    let randomAge =faker.random.numeric(2);
-    let admin=False
+    let randomAge =faker.random.numeric(3);
+    let admin="False"
     data.push([randomName,randomEmail,randomPassword,randomAge,admin])
   }
 
 
 const db = mysql.createConnection({
-    host: process.env.host,
-    user: process.env.user,
-    password: process.env.password,
-    database: process.env.database
+    host:"localhost" ,
+    user: "root" ,
+    port:"3306",
+    database: "portail"   
   });
   
 

@@ -17,7 +17,7 @@ async function createTables(){
     }
   );
   await db.query(
-    "CREATE TABLE IF NOT EXISTS studies (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,name VARCHAR(255));",
+    "CREATE TABLE IF NOT EXISTS studies (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,name VARCHAR(255),disease VARCHAR(255));",
     function (err) {
       if (err) throw err;
       console.log("studies TABLE created.");
@@ -31,7 +31,7 @@ async function createTables(){
     }
   );
 }
-
+ 
 
 //createTables()
 server.listen(

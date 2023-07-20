@@ -1,18 +1,12 @@
 const express = require("express");
 const app = express();
-const router = express.Router();
 const fileupload = require("express-fileupload");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const db = require("../config");
 app.use(express.static("./public"));
-const { auctionValidation } = require("../validation");
-const path = require("path");
-const fs = require("fs");
-const { resolve } = require("path");
+
 app.use(cors());
-app.use(fileupload());
-app.use(express.static("files"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 //const Axios = require("axios");
@@ -21,9 +15,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 function checkIfStudyExists(req) {
     return new Promise((resolve, reject) => {
       console.log("Checking if studies exists");
-      let sqlverif = "SELECT * FROM studies WHERE study= ?";
+      let sqlverif = "SELECT * FROM studies WHERE name= ?";
   
-      db.query(sqlverif, [req.body.study], (err, result) => {
+      db.query(sqlverif, [req.body.name], (err, result) => {
         if (err) {
           throw err;
         }
@@ -38,12 +32,13 @@ function checkIfStudyExists(req) {
 // Handle file uploads
 async function createStudy(req, res) {
   // validate request body
-  const { error } = registerValidation(req.body);
+  const { error } = checkIfStudyExists(req);
   if (error) {
     return res.status(400).send(error.details[0].message);
     
   }
   const data = [req.body.name, req.body.disease];
+  console.log(data)
   const sql = "INSERT INTO studies (name,disease) VALUES (?,?)";
   const studyExists = await checkIfStudyExists(req);
 
@@ -66,7 +61,7 @@ async function displayStudy(req, res) {
   const limit = req.query.limit || 10;
   const offset = (page - 1) * limit;
   try {
-    const getData = `SELECT * FROM studies ORDER BY date Asc LIMIT ${limit} OFFSET ${offset}`;
+    const getData = `SELECT * FROM studies LIMIT ${limit} OFFSET ${offset}`;
     await db.query(getData, (err, result) => {
       if (err) {
         throw err;
@@ -118,46 +113,6 @@ async function deleteStudy(req, res) {
   }
   
 
-async function countParticipantsBystudy(req, res) 
-  {
-    const study_id = req.params.study_id;
-  
-  
-    const query = `SELECT COUNT(*) as count FROM studies WHERE study_id = ${study_id}`;
-    try {
-      await db.query(query, (err, result) => {
-        if (err) {
-          throw err;
-        }
-        res.send(result);
-      });
-    } catch (err) {
-      console.log(err);
-      return res
-        .status(500)
-        .send({ error: "Error retrieving data from the database" });
-    }
-  }
-async function displayParticipantsBystudy(req, res) {
-  const study_id = req.params.study_id;
- 
-
-  console.log(study_id);
-  const query = `SELECT COUNT(*) as count FROM studies WHERE study_id = ${study_id}`;
-  try {
-    await db.query(query, (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.send(result);
-    });
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .send({ error: "Error retrieving data from the database" });
-  }
-}
 
 
 module.exports = {
@@ -165,7 +120,5 @@ module.exports = {
   createStudy,
   countStudies,
   deleteStudy,
-  countParticipantsBystudy,
-  displayParticipantsBystudy,
 
 };
