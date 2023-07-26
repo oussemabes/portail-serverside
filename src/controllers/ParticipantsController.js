@@ -7,6 +7,7 @@ const db = require("../config");
 const path = require("path");
 const fs = require("fs");
 const { resolve } = require("path");
+const { exist } = require("@hapi/joi");
 app.use(express.static("./public"));
 app.use(cors());
 app.use(fileupload());
@@ -122,12 +123,35 @@ async function displayParticipantsBystudy(req, res) {
       .send({ error: "Error retrieving data from the database" });
   }
 }
+function checkIfRequestExistOrAccepted(req) {
+  return new Promise((resolve, reject) => {
+    console.log("Checking if Request exist or accepted");
+    let sqlverif = `SELECT * FROM participants WHERE user_id = ? AND (state = "pending" OR state = "accept") AND study_id = ?`;
+
+    db.query(sqlverif, [ req.body.user_id,req.body.study_id], (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      const exists = result.length > 0;
+      resolve({ exists }); // Resolve with an object indicating if the request exists
+    });
+  });
+}
+
 async function addParticpants(req, res) {
-  // validate request body
-  // const { error } = await auctionValidation(req.body);
-  // if (error) {
-  //   return res.status(400).send(error.details[0].message);
-  // }
+  console.log(req.body.ref)
+  //validate request body
+  try {
+    // Validate request body
+    const { exists } = await checkIfRequestExistOrAccepted(req); // Pass 'req' directly here
+
+    if (exists) {
+      return res.status(400).send({ message: "Request already exist" });
+    }
+  } catch (err) {
+    console.error("Error occurred:", err);
+    return res.status(500).send({ message: "An error occurred" });
+  }
   if (!req.file) {
     return res.status(400).send("No file was uploaded.");
   }
@@ -149,10 +173,11 @@ async function addParticpants(req, res) {
   const baseUrl = req.protocol + "://" + req.get("host");
   const imageUrl = baseUrl + "/images/" + file.originalname;
   const insertData =
-    "INSERT INTO participants (user_id,study_id,state,document,date) VALUES (?,?,?,?,?)";
+    "INSERT INTO participants (ref,user_id,study_id,state,document,date) VALUES (?,?,?,?,?,?)";
   await db.query(
     insertData,
     [
+      req.body.ref,
       req.body.user_id,
       req.body.study_id,
       req.body.state,
@@ -173,14 +198,14 @@ async function addParticpants(req, res) {
     .send({ message: "File Uploaded and Data Inserted Successfully" });
 }
 async function updateParticipantState(req, res) {
-  const { user_id,study_id } = req.params;
+  const { user_id,study_id,id } = req.params;
   const { newState } = req.body;
   
 
   try {
-    const updateQuery = "UPDATE participants SET state = ? WHERE user_id = ? AND study_id= ?";
+    const updateQuery = "UPDATE participants SET state = ? WHERE user_id = ? AND study_id= ? AND id=?";
     console.log(req.body.state)
-    await db.query(updateQuery, [req.body.state, user_id,study_id]);
+    await db.query(updateQuery, [req.body.state, user_id,study_id,id]);
     
     res.status(200).json({ message: "Participant state updated successfully" });
   } catch (error) {

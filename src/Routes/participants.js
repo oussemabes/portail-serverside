@@ -62,7 +62,7 @@ const {
   router.route('/display/:user_id').get(VerifyToken,upload, (req, res) => {
     DisplayByUser(req, res);
   });
-  router.route('/update/:user_id/:study_id').patch(VerifyToken,(req, res) => {
+  router.route('/update/:user_id/:study_id/:id').patch(VerifyToken,(req, res) => {
     updateParticipantState(req, res);
   });//
 
