@@ -21,7 +21,7 @@ async function countParticipantsBystudy(req, res)
   {
     const study_id = req.params.study_id;
   
-  
+
     const query = `SELECT COUNT(*) as count FROM participants WHERE study_id = ${study_id}`;
     try {
       await db.query(query, (err, result) => {
@@ -29,6 +29,71 @@ async function countParticipantsBystudy(req, res)
           throw err;
         }
         res.send(result);
+      });
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .send({ error: "Error retrieving data from the database" });
+    }
+  }
+
+  async function countStudiesByparticipants(req, res) 
+  {
+    const user_id = req.params.user_id
+  
+  
+    const query = `SELECT COUNT(*) as count FROM participants WHERE user_id = ${user_id}`;
+    try {
+      await db.query(query, (err, result) => {
+        if (err) {
+          throw err;
+        }
+        res.send(result);
+      });
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .send({ error: "Error retrieving data from the database" });
+    }
+  }
+  async function countAceptedStudiesByparticipants(req, res) 
+  {
+    const user_id = req.params.user_id
+  
+  
+    const query = `SELECT COUNT(*) as count FROM participants WHERE user_id = ${user_id} AND state="accept"`;
+    try {
+      await db.query(query, (err, result) => {
+        if (err) {
+          throw err;
+        }
+        res.send(result);
+      });
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .send({ error: "Error retrieving data from the database" });
+    }
+  }
+
+  async function DisplayByUser(req, res) 
+  {
+    const user_id = req.params.user_id;
+    console.log("page", req.query.page, "limit", req.query.limit);
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
+  const offset = (page - 1) * limit;
+   
+    const query = `SELECT * FROM participants WHERE user_id = ${user_id} ORDER BY date Desc LIMIT ${limit} OFFSET ${offset}`;
+    try {
+      await db.query(query, (err, result) => {
+        if (err) {
+          throw err;
+        }
+        res.send(result); 
       });
     } catch (err) {
       console.log(err);
@@ -110,10 +175,12 @@ async function addParticpants(req, res) {
 async function updateParticipantState(req, res) {
   const { user_id,study_id } = req.params;
   const { newState } = req.body;
+  
 
   try {
     const updateQuery = "UPDATE participants SET state = ? WHERE user_id = ? AND study_id= ?";
-    await db.query(updateQuery, [newState, user_id,study_id]);
+    console.log(req.body.state)
+    await db.query(updateQuery, [req.body.state, user_id,study_id]);
     
     res.status(200).json({ message: "Participant state updated successfully" });
   } catch (error) {
@@ -126,5 +193,8 @@ module.exports = {
   countParticipantsBystudy,
   displayParticipantsBystudy,
   addParticpants,
-  updateParticipantState
-};
+  updateParticipantState,
+  DisplayByUser,
+  countStudiesByparticipants,
+  countAceptedStudiesByparticipants
+};  

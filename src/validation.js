@@ -8,7 +8,8 @@ const registerValidation = (data) => {
     password: Joi.string().min(6).required(),
     admin: Joi.string(),
     age: Joi.number(),
-    chronic:Joi.string()
+    ref:Joi.number(),
+    gender:Joi.string()
 
   });
   return schema.validate(data);
@@ -24,6 +25,7 @@ const studyValidation = (data) => {
     const schema = Joi.object({
       name: Joi.string().min(6).required().email(),
       disease: Joi.string().min(6).required(),
+      discreption:Joi.string().min(6).required(),
     });
     return schema.validate(data);
   };

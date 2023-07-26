@@ -36,8 +36,8 @@ async function registerUser(req, res) {
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
   
     // Create new user
-    const data = [req.body.name, req.body.email, hashedPassword,req.body.admin, req.body.age, req.body.chronic];
-    const sql = "INSERT INTO users (name, email, Password, admin, age) VALUES (?,?,?,?,?)";
+    const data = [req.body.ref,req.body.name, req.body.email, hashedPassword,req.body.admin, req.body.age, req.body.gender];
+    const sql = "INSERT INTO users (ref,name, email, Password, admin, age,gender) VALUES (?,?,?,?,?,?,?)";
     const userExists = await checkIfUserExists(req);
     if (userExists === false) {
       await db.query(sql, data, function (err, result) {
@@ -97,12 +97,11 @@ async function loginUser(req,res){
   }
 }
 async function displayUsers(req, res) {
-  console.log("page", req.query.page, "limit", req.query.limit);
   const page = req.query.page || 1;
   const limit = req.query.limit || 10;
   const offset = (page - 1) * limit;
   try {
-    const getData = `SELECT * FROM users LIMIT ${limit} OFFSET ${offset}`;
+    const getData = `SELECT * FROM users WHERE admin="false" LIMIT ${limit} OFFSET ${offset}`;
     await db.query(getData, (err, result) => {
       if (err) {
         throw err;
@@ -135,7 +134,7 @@ async function displayUsersByID(req, res) {
 }
 async function countUsers(req,res){
   try{
-    const getData="SELECT COUNT(*) as count FROM users"
+    const getData=`SELECT COUNT(*) as count FROM users WHERE admin="false"`
     await db.query(getData,(err,result)=>{
       if (err){
         throw err;
@@ -148,5 +147,49 @@ async function countUsers(req,res){
     .status(500)
     .send({error:"Error retrieving data from the database"})
   }
+} 
+function VerifyToken(req,res,next) {
+  const token=req.header('Authorization');
+  
+  if(!token) return res.status(401).send('Access Denied');
+  try{
+      const verified = jwt.verify(token.split(' ')[1], process.env.ACCESS_TOKEN_SECRET);
+      console.log(verified)
+      req.user=verified;
+      
+      next()
+  }catch(err){
+    console.log(token)
+      res.status(400).send('Invalid Token');
+  }
+
 }
-module.exports={registerUser,loginUser,checkIfUserExists,countUsers,displayUsers,displayUsersByID}
+async function VerifyAdmin(req, res, next) {
+  const token = req.header('Authorization');
+  const verified = jwt.verify(token.split(' ')[1], process.env.ACCESS_TOKEN_SECRET);
+  const userId = verified.id;
+
+  try {
+    const getData = `SELECT admin FROM users WHERE id = ${userId}`;
+    await db.query(getData, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send({ error: "Error retrieving data from the database" });
+      }
+
+      const isAdmin = result[0].admin;
+      console.log(isAdmin)
+      if (isAdmin==="false") {
+        return res.status(403).send('Access Forbidden. User is not an admin.');
+      }
+
+      // Call next middleware only if the user is an admin
+      next();
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ error: "Error retrieving data from the database" });
+  }
+}
+
+module.exports={registerUser,loginUser,checkIfUserExists,countUsers,displayUsers,displayUsersByID,VerifyToken,VerifyAdmin} 
