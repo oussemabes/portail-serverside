@@ -37,9 +37,9 @@ async function createStudy(req, res) {
     return res.status(400).send(error.details[0].message);
     
   }
-  const data = [req.body.name, req.body.disease];
+  const data = [req.body.name, req.body.disease,req.body.discreption];
   console.log(data)
-  const sql = "INSERT INTO studies (name,disease) VALUES (?,?)";
+  const sql = "INSERT INTO studies (name,disease,discreption) VALUES (?,?,?)";
   const studyExists = await checkIfStudyExists(req);
 
     if (studyExists === false) {
@@ -75,6 +75,43 @@ async function displayStudy(req, res) {
       .send({ error: "Error retrieving data from the database" });
   }
 }
+async function displayStudyByid(req, res) {
+  const study_id=req.params.study_id
+
+
+  try {
+    const getData = `SELECT * FROM studies WHERE id=${study_id}`;
+    await db.query(getData, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.send(result);
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ error: "Error retrieving data from the database" });
+  }
+}
+async function displayAllStudy(req, res) {
+
+  try {
+    const getData = `SELECT * FROM studies`;
+    await db.query(getData, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.send(result);
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ error: "Error retrieving data from the database" });
+  }
+}
+
 
 async function countStudies(req, res) {
   try {
@@ -116,9 +153,10 @@ async function deleteStudy(req, res) {
 
 
 module.exports = {
+  displayAllStudy,
   displayStudy,
   createStudy,
   countStudies,
   deleteStudy,
-
+  displayStudyByid
 };

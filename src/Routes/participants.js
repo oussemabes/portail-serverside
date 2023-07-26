@@ -1,8 +1,10 @@
 const {
     countParticipantsBystudy,
     displayParticipantsBystudy,
-    addParticpants,updateParticipantState
+    addParticpants,updateParticipantState,DisplayByUser,countStudiesByparticipants,countAceptedStudiesByparticipants
   } = require("../controllers/ParticipantsController");
+  const {VerifyToken,VerifyAdmin}=require("../controllers/UserController")
+
   const express = require("express");
   const router = express.Router();
   const multer = require("multer");
@@ -38,22 +40,31 @@ const {
         );
       }
     },
-  }).single("file");
+  }).single("document");//
   
-  router.route('/countbystudy/:id').get((req, res) => {
-    countParticipantsBystudy(req, res);
+  router.route('/countbystudy/:study_id').get(VerifyToken,VerifyAdmin,(req, res) => {
+    countParticipantsBystudy(req, res); 
   });
   
-  router.route('/displayParticipantsBystudy/:study_id').get((req, res) => {
+  router.route('/displayParticipantsBystudy/:study_id').get(VerifyToken,VerifyAdmin,(req, res) => {
     displayParticipantsBystudy(req, res);
-  });
+  }); 
+  router.route('/countbystudies/:user_id').get(VerifyToken,(req, res) => {
+    countStudiesByparticipants(req, res);
+  }); 
+  router.route('/countbyacceptedstudies/:user_id').get(VerifyToken,(req, res) => {
+    countAceptedStudiesByparticipants(req, res);
+}); 
   
-  router.route('/create').post(upload, (req, res) => {
+  router.route('/create').post(VerifyToken,VerifyAdmin,upload, (req, res) => {
     addParticpants(req, res);
   });
-  router.route('/update/:user_id/:study_id').put((req, res) => {
-    updateParticipantState(req, res);
+  router.route('/display/:user_id').get(VerifyToken,upload, (req, res) => {
+    DisplayByUser(req, res);
   });
+  router.route('/update/:user_id/:study_id').patch(VerifyToken,(req, res) => {
+    updateParticipantState(req, res);
+  });//
 
   module.exports = router;
-  
+   
