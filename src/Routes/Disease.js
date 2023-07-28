@@ -11,7 +11,7 @@ router.route('/display/:user_id').get(VerifyToken,(req,res)=>{
     getUserDiseases(req,res)
 });//
 
-
+ 
 
 module.exports = router;
  

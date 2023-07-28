@@ -6,7 +6,7 @@ router.route('/register').post((req,res)=>{
 });
 router.route('/login').post((req,res)=>{
   loginUser(req,res)
-});
+}); 
 router.route('/countUsers').get(VerifyToken,VerifyAdmin,(req,res)=>{
   countUsers(req,res);
 });

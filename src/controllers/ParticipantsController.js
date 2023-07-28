@@ -130,31 +130,34 @@ function checkIfRequestExistOrAccepted(req) {
 
     db.query(sqlverif, [ req.body.user_id,req.body.study_id], (err, result) => {
       if (err) {
-        return reject(err);
+        throw err;   
       }
-      const exists = result.length > 0;
-      resolve({ exists }); // Resolve with an object indicating if the request exists
+      if (result.length > 0) {
+        resolve(true); 
+      } else {
+        resolve(false);
+      }
     });
-  });
+  }); 
 }
+
 
 async function addParticpants(req, res) {
   console.log(req.body.ref)
   //validate request body
-  try {
     // Validate request body
     const { exists } = await checkIfRequestExistOrAccepted(req); // Pass 'req' directly here
 
     if (exists) {
       return res.status(400).send({ message: "Request already exist" });
     }
-  } catch (err) {
-    console.error("Error occurred:", err);
-    return res.status(500).send({ message: "An error occurred" });
-  }
+ 
   if (!req.file) {
     return res.status(400).send("No file was uploaded.");
   }
+  const requestexist = await checkIfRequestExistOrAccepted(req);
+  console.log(requestexist)
+  if (requestexist === false) {
 
   // Rename file to original name and move to designated folder
   const newpath = path.join(__dirname, "..", "/public/images/");
@@ -187,15 +190,17 @@ async function addParticpants(req, res) {
     (err, result)=>{
       
         if (err) {
-          return res.status(500).send({ message: "Data insertion failed" });
+          return res.status(500).send(err);
         }
+        res.status(200).send("User registered successfully");
+
       }
     
-  );
+  );} 
 
-  return res
-    .status(200)
-    .send({ message: "File Uploaded and Data Inserted Successfully" });
+  else {
+    res.status(400).send("User with that information already exists");
+  }
 }
 async function updateParticipantState(req, res) {
   const { user_id,study_id,id } = req.params;
