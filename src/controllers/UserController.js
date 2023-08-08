@@ -45,7 +45,8 @@ async function registerUser(req, res) {
           console.error(err);
           return res.status(500).send("Error inserting user into the database");
         }
-        res.status(200).send("User registered successfully");
+        console.log(result.insertId)
+        res.status(200).send({ message: "User registered successfully", userId: result.insertId });
       });
     } else {
       res.status(400).send("User with that information already exists");
@@ -64,7 +65,7 @@ async function loginUser(req,res){
     //see if password matches
     function GetDbPassword() {
     return new Promise((resolve, reject) => {
-      let sqlverif = "SELECT id,password FROM users WHERE email= ?";
+      let sqlverif = "SELECT id,password,ref FROM users WHERE email= ?";
       db.query(sqlverif, [req.body.email], (err, result) => {
         if (err) {
           throw err;
@@ -78,7 +79,7 @@ async function loginUser(req,res){
       });
     });
   }
-  const {id,dbPassword}=await GetDbPassword();
+  const {id,dbPassword,ref}=await GetDbPassword();
   const validPass=await bcrypt.compare(req.body.password,dbPassword)
   const validPassNotCrypted=req.body.password==dbPassword;
   console.log(dbPassword,req.body.password)

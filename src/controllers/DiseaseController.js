@@ -39,9 +39,9 @@ async function add_disease(req, res) {
       db.beginTransaction((err) => {
         if (err) {
           console.error('Error starting transaction:', err);
-          return res.status(500).json({ error: 'Failed to add disease to user.' });
+          return res.status(500).json({ error: ' Failed to add disease to user.' });
         }
-  
+     
         db.query(insertDiseaseQuery, [disease_name], (err, result) => {
           if (err) {
             console.error('Error adding new disease:', err);

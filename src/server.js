@@ -9,13 +9,26 @@ db.connect(function (err) {
 });
 async function createTables() {
   await db.query(
-    "CREATE TABLE IF NOT EXISTS users (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, ref INT(11) UNSIGNED UNIQUE, name VARCHAR(30), email VARCHAR(30), password VARCHAR(255), admin VARCHAR(10), age INT(3), gender VARCHAR(30));",
+    "CREATE TABLE IF NOT EXISTS users (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, ref INT(11) UNSIGNED UNIQUE, name VARCHAR(30), email VARCHAR(30), password VARCHAR(255), admin VARCHAR(10), age INT(3), gender VARCHAR(255));",
     function (err) {
       if (err) throw err;
       console.log("users TABLE created.");
     }
   ); 
-
+  await db.query( 
+    "CREATE TABLE IF NOT EXISTS patient (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, ref INT(11) UNSIGNED UNIQUE, connection_id VARCHAR(255), disease VARCHAR(255),gender VARCHAR(255),date VARCHAR(255));",
+    function (err) {
+      if (err) throw err;
+      console.log("patient TABLE created.");
+    }
+  ); 
+  await db.query( 
+    "CREATE TABLE IF NOT EXISTS test (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, ref INT(11) UNSIGNED UNIQUE, date DATETIME, gender VARCHAR(255),disease VARCHAR(255));",
+    function (err) {
+      if (err) throw err;
+      console.log("test TABLE created.");
+    }
+  ); 
   await db.query(
     "CREATE TABLE IF NOT EXISTS diseases (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255));",
     function (err) {
@@ -23,7 +36,7 @@ async function createTables() {
       console.log("diseases TABLE created.");
     }
   );
-
+ 
   await db.query(
     "CREATE TABLE IF NOT EXISTS user_diseases (user_id INT(11) UNSIGNED, disease_id INT(11) UNSIGNED, PRIMARY KEY (user_id, disease_id), FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY (disease_id) REFERENCES diseases(id));",
     function (err) {
@@ -51,7 +64,7 @@ async function createTables() {
     "CREATE TABLE IF NOT EXISTS health_measurements (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,user_id INT(11) UNSIGNED,date DATE,heart_beat INT(3),temperature FLOAT,  oxygen_saturation FLOAT,blood_pressure INT(3),FOREIGN KEY (user_id) REFERENCES users(id));",
     function (err) {
       if (err) throw err;
-      console.log("participants TABLE created.");
+      console.log("health_measurements TABLE created.");
     }
   );
 }

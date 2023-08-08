@@ -112,7 +112,7 @@ async function displayAllStudy(req, res) {
   }
 }
 
-
+   
 async function countStudies(req, res) {
   try {
     const getCount = "SELECT COUNT(*) as count FROM studies";
@@ -120,7 +120,7 @@ async function countStudies(req, res) {
       if (err) {
         throw err;
       }
-      res.send(result);
+      res.send(result); 
     });
   } catch (err) {
     console.log(err);

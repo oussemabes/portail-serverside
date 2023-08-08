@@ -61,6 +61,7 @@ async function countParticipantsBystudy(req, res)
   }
   async function countAceptedStudiesByparticipants(req, res) 
   {
+    
     const user_id = req.params.user_id
   
   
