@@ -100,7 +100,7 @@ async function loginUser(req,res){
 async function displayUsers(req, res) {
   const page = req.query.page || 1;
   const limit = req.query.limit || 10;
-  const offset = (page - 1) * limit;
+  const offset = Math.ceil((page - 1) * limit);
   try {
     const getData = `SELECT * FROM users WHERE admin="false" LIMIT ${limit} OFFSET ${offset}`;
     await db.query(getData, (err, result) => {

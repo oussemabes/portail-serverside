@@ -16,7 +16,7 @@ router.route('/count').get((req,res)=>{
 router.route('/displayPatientByref/:ref').get((req,res)=>{
     displayPatientByref(req,res)
 });
-
+ 
 
 
 module.exports = router;

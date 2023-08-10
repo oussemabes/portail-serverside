@@ -18,18 +18,18 @@ async function add_disease(req, res) {
       return res.status(400).json({ error: 'User ID and disease name are required.' });
     }
   
-    const checkUserDiseaseQuery = 'SELECT * FROM user_diseases WHERE user_id = ? AND disease_id = (SELECT id FROM diseases WHERE name = ?)';
+    const checkUserDiseaseQuery = 'SELECT * FROM user_diseases WHERE user_id = ? AND disease_id = (SELECT id FROM diseases WHERE name = ? limit 1)';
   
     // Check if the user already has the disease
     db.query(checkUserDiseaseQuery, [user_id, disease_name], (err, result) => {
       if (err) {
         console.error('Error checking user diseases:', err);
-        return res.status(500).json({ error: 'Failed to add disease to user.' });
+        return res.status(500).json({ error: 'Failed to add disease to user' });
       }
   
       if (result.length > 0) {
         // The user already has the disease, so return an error
-        return res.status(400).json({ error: 'User already has this disease.' });
+        return res.status(400).json({ error: 'User already has this disease.' }); 
       }
   
       const insertDiseaseQuery = 'INSERT INTO diseases (name) VALUES (?)';
