@@ -10,7 +10,7 @@ for (let i = 0; i < 100; i++) {
     let admin="False"
     data.push([randomName,randomEmail,randomPassword,randomAge,admin])
   }
-
+ 
 
 const db = mysql.createConnection({
     host:"localhost" ,

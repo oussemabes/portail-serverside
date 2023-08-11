@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // API endpoint to enter health measurements
 async function add_Health_Measurement(req, res) {
-    const { user_id, date, heart_beat, temperature, oxygen_saturation, blood_pressure } = req.body;
+    const { user_id, date, heart_beat, temperature, oxygen_saturation, blood_pressure,study_id } = req.body;
   
     if (!user_id || !date || !heart_beat || !temperature || !oxygen_saturation || !blood_pressure) {
       return res.status(400).json({ error: 'All fields are required.' });
@@ -35,12 +35,12 @@ async function add_Health_Measurement(req, res) {
   
       // Insert new health measurements into the database
       const insertHealthMeasurementsQuery =
-        'INSERT INTO health_measurements (user_id, date, heart_beat, temperature, oxygen_saturation, blood_pressure) ' +
-        'VALUES (?, ?, ?, ?, ?, ?)';
+        'INSERT INTO health_measurements (user_id,study_id ,date, heart_beat, temperature, oxygen_saturation, blood_pressure) ' +
+        'VALUES (?, ?, ?, ?, ?, ?,?)';
   
       db.query(
         insertHealthMeasurementsQuery,
-        [user_id, date, heart_beat, temperature, oxygen_saturation, blood_pressure],
+        [user_id,study_id, date, heart_beat, temperature, oxygen_saturation, blood_pressure],
         (err) => {
           if (err) {
             console.error('Error inserting health measurements:', err);

@@ -61,14 +61,14 @@ async function createTables() {
     }
   );
   await db.query(
-    "CREATE TABLE IF NOT EXISTS health_measurements (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,user_id INT(11) UNSIGNED,date DATE,heart_beat INT(3),temperature FLOAT,  oxygen_saturation FLOAT,blood_pressure INT(3),FOREIGN KEY (user_id) REFERENCES users(id));",
+    "CREATE TABLE IF NOT EXISTS health_measurements (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,user_id INT(11) UNSIGNED,study_id INT(11) UNSIGNED,date DATE,heart_beat INT(3),temperature FLOAT,  oxygen_saturation FLOAT,blood_pressure INT(3),FOREIGN KEY (user_id) REFERENCES users(id),FOREIGN KEY (study_id) REFERENCES studies(id) ON DELETE CASCADE);",
     function (err) {
-      if (err) throw err;
+      if (err) throw err;  
       console.log("health_measurements TABLE created.");
     }
-  );
+  ); 
 }
- 
+  
  
  
 createTables()
