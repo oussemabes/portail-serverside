@@ -114,9 +114,29 @@ async function displayPatientByref(req, res) {
       .send({ error: "Error retrieving data from the database" });
   }
 }
+async function GetConnectionIdByref(req, res) {
+
+  const ref=req.params.ref
+
+  try {
+    const getData = `SELECT connection_id FROM patient WHERE ref=${ref} `;
+    await db.query(getData, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.send(result);
+    });
+  } catch (err) { 
+    console.log(err);
+    return res
+      .status(500)
+      .send({ error: "Error retrieving data from the database" });
+  }
+}
 module.exports = {
   Createpatient,
   displayPatient,
   displayPatientByref,
-  countPatientOnlySecConnec
+  countPatientOnlySecConnec,
+  GetConnectionIdByref
 };   

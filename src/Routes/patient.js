@@ -1,4 +1,4 @@
-const {Createpatient,displayPatient,displayPatientByref,countPatientOnlySecConnec
+const {Createpatient,displayPatient,displayPatientByref,countPatientOnlySecConnec,GetConnectionIdByref
 }=require("../controllers/PatientController")
 
 const express = require("express");
@@ -16,7 +16,9 @@ router.route('/count').get((req,res)=>{
 router.route('/displayPatientByref/:ref').get((req,res)=>{
     displayPatientByref(req,res)
 });
- 
 
+router.route('/GetConnectionIdByref/:ref').get((req,res)=>{
+    GetConnectionIdByref(req,res)
+});
 
 module.exports = router;

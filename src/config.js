@@ -8,4 +8,4 @@ const db = mysql.createConnection({
   password: "",
   database: "portail",
 });
-module.exports = db 
+module.exports = db  
