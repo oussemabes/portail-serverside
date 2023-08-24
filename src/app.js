@@ -14,7 +14,7 @@ app.use(bodyparser.urlencoded({
 
 const path = require("path");
 
-
+  
 
 app.use(express.static(path.join(__dirname, '/public')));
 //import routes
@@ -27,14 +27,14 @@ const patientRoute=require("./Routes/patient")
 const UnregistredPatientRoute=require("./Routes/UnregistredPatient")
 
 //route middlewares 
-app.use('/backend/user',authRoute)
+app.use('/backend/user',authRoute) 
 app.use("/backend/studies",studiesRoute)
 app.use("/backend/participants",particpantsRoute)
 app.use("/backend/disease",DiseaseRoute)
 app.use("/backend/HealthMeasurement",HealthMeasurementRoute)
 app.use("/backend/patient",patientRoute)
 app.use("/backend/unregistredpatient",UnregistredPatientRoute)
-
+ 
 
 
 module.exports = { app };

@@ -3,6 +3,7 @@ const http = require("http");
 require("dotenv").config();
 const server = http.createServer(app);
 const db = require("./config");
+
 db.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
@@ -46,7 +47,7 @@ async function createTables() {
   );
 
   await db.query(
-    "CREATE TABLE IF NOT EXISTS studies (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255),discreption VARCHAR(30),disease VARCHAR(255));",
+    "CREATE TABLE IF NOT EXISTS studies (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255),discreption VARCHAR(255),disease VARCHAR(255));",
     function (err) {
       if (err) throw err;
       console.log("studies TABLE created.");
@@ -74,6 +75,5 @@ async function createTables() {
 createTables()
 server.listen(
   process.env.SERVER_PORT,
-  console.log(`server is running at port http://${process.env.SERVER_PORT}`)
 );
-  
+   
